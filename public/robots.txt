@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://zyiadalkirre-source.github.io/Z5/sitemap.xml

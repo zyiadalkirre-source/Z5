@@ -1,0 +1,4 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'; import {products} from '../data/products'; const base=import.meta.env.BASE_URL;
+---
+<BaseLayout title="Deals — Z5"><section class="catalog"><div class="eyebrow">Deals</div><h1>Price drops & merchant offers.</h1><p class="muted">Live deal badges appear only after price history is connected and verified.</p></section><section class="section"><div class="notice">Seeded products are intentionally unpriced until a live merchant feed or API provides a verified current price.</div><div class="grid" style="margin-top:24px">{products.slice(0,12).map(p=><a class="card" href={base+'product/'+p.id}><div class="card-info"><div class="brand">{p.brand} · {p.merchant}</div><h3>{p.name}</h3><div class="meta"><span>Price pending</span><span class="price">View offer ↗</span></div></div></a>)}</div></section></BaseLayout>

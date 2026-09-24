@@ -1,6 +1,112 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro'; import {products} from '../../data/products'; export function getStaticPaths(){return products.map(product=>({params:{id:product.id},props:{product}}));} const {product}=Astro.props; const base=import.meta.env.BASE_URL; const related=products.filter(p=>p.category===product.category&&p.id!==product.id).slice(0,3);
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { products } from '../../data/products';
+
+export function getStaticPaths() {
+  return products.map(item => ({ params:{id:item.id}, props:{product:item} }));
+}
+
+const { product } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const related = products.filter(item => item.category === product.category && item.id !== product.id).slice(0,3);
+const offerCount = product.offers?.length || 1;
+const destination = product.affiliateStatus === 'verified' && product.affiliateUrl ? product.affiliateUrl : product.merchantUrl;
 ---
-<BaseLayout title={product.name+' — Z5'} description={product.description}><section class="detail"><div><div class="detail-image"><img id="main-image" src={product.image} alt={product.name}></div><div class="gallery">{product.gallery.map((image,i)=><button type="button" class={i===0?'active':''} data-image={image}><img src={image} alt={product.name+' view '+(i+1)}></button>)}</div></div><div><div class="eyebrow">{product.category} · {product.audience}</div><h1>{product.name}</h1><div>{product.rating ? '★ '+product.rating+' · '+product.reviews+' reviews' : 'Rating pending verification'}</div><p class="desc">{product.description}</p><div class="price big">{product.price ? product.currency+' '+product.price : 'Price pending verification'} <span class="muted small">· {product.size}</span></div><ul class="feature-list">{product.features.map(f=><li>{f}</li>)}</ul>{product.ingredients&&<div class="notice"><b>Ingredients</b><p>{product.ingredients}</p></div>}<div class="offer"><div><b>{product.merchant}</b><div class="muted">{product.availability} · Updated {product.updatedAt}</div></div><a class="btn" href={product.affiliateStatus==='verified'&&product.affiliateUrl?product.affiliateUrl:product.merchantUrl} target="_blank" rel="noopener noreferrer sponsored" data-shop data-product={product.id}>Visit merchant ↗</a></div><div class="detail-actions"><button class="btn light" data-wish={product.id}>♡ Wishlist</button><button class="btn light" data-compare={product.id}>＋ Compare</button></div><div class="notice" style="margin-top:16px"><b>Trust & freshness</b><p>Price: {product.verifiedPrice?'verified':'pending'} · Rating source: {product.ratingSource||'pending'} · Rating date: {product.ratingDate||'pending'} · Affiliate: {product.affiliateStatus}.</p></div></div></section><section class="section"><div class="head"><div><div class="eyebrow">More like this</div><h2>Related products</h2></div></div><div class="grid">{related.map(p=><a class="card" href={base+'product/'+p.id}><div class="card-img"><img src={p.image} alt={p.name}></div><div class="card-info"><div class="brand">{p.brand}</div><h3>{p.name}</h3><div class="meta"><span>{p.category}</span><span class="price">{p.price?'$ '+p.price:'Pending'}</span></div></div></a>)}</div></section><script type="application/ld+json" set:html={JSON.stringify({"@context":"https://schema.org","@type":"Product","name":product.name,"brand":{"@type":"Brand","name":product.brand},"category":product.category,"image":product.gallery,"description":product.description,"offers":product.price?{"@type":"Offer","price":product.price,"priceCurrency":product.currency}:undefined})}></BaseLayout>
-<script is:inline>const id='${product.id}';const base='${base}';const read=k=>JSON.parse(localStorage.getItem(k)||'[]');const views=read('z5-views');views.push({product:id,timestamp:new Date().toISOString(),source:location.pathname});localStorage.setItem('z5-views',JSON.stringify(views.slice(-10000)));const recent=read('z5-recent').filter(x=>x!==id);localStorage.setItem('z5-recent',JSON.stringify([id,...recent].slice(0,12)));document.querySelectorAll('[data-image]').forEach(b=>b.addEventListener('click',()=>{document.querySelector('#main-image').src=b.dataset.image;document.querySelectorAll('[data-image]').forEach(x=>x.classList.remove('active'));b.classList.add('active')}));document.querySelector('[data-wish]')?.addEventListener('click',()=>{const a=read('z5-wishlist');const next=a.includes(id)?a.filter(x=>x!==id):[...a,id];localStorage.setItem('z5-wishlist',JSON.stringify(next));location.reload()});document.querySelector('[data-compare]')?.addEventListener('click',()=>{const a=read('z5-compare');if(!a.includes(id)&&a.length<4)a.push(id);localStorage.setItem('z5-compare',JSON.stringify(a));location.href=base+'compare'});document.querySelector('[data-shop]')?.addEventListener('click',()=>{const rows=read('z5-clicks');rows.push({product:id,timestamp:new Date().toISOString(),source:location.pathname,merchant:'${product.merchant}',url:'${product.affiliateStatus==='verified'&&product.affiliateUrl?product.affiliateUrl:product.merchantUrl}',context:'product-page',campaign:new URLSearchParams(location.search).get('utm_campaign')||''});localStorage.setItem('z5-clicks',JSON.stringify(rows.slice(-5000)))});
+<BaseLayout title={product.name+' — Z5'} description={product.description}>
+  <section class="detail detail-premium">
+    <div>
+      <div class="detail-image detail-image-premium">
+        <span class="detail-badge">{product.category}</span>
+        <img id="main-image" src={product.image} alt={product.name}>
+      </div>
+      <div class="gallery">{product.gallery.map((image,i)=><button type="button" class={i===0?'active':''} data-image={image} aria-label={'View image '+(i+1)}><img src={image} alt="" loading="lazy"></button>)}</div>
+    </div>
+
+    <div>
+      <div class="eyebrow">{product.brand} · {product.audience}</div>
+      <h1>{product.name}</h1>
+      <div class="product-rating">{product.rating ? '★ '+product.rating+' · '+product.reviews+' reviews' : 'Rating pending verification'}</div>
+      <p class="desc">{product.description}</p>
+      <div class="price big">{product.price ? product.currency+' '+product.price : 'Price pending verification'} <span class="muted small">· {product.size}</span></div>
+
+      <div class="status-row">
+        <span class="status-chip">{product.verifiedPrice ? '✓ Price verified' : 'Price pending'}</span>
+        <span class="status-chip">{product.ratingSource ? '✓ Rating sourced' : 'Rating pending'}</span>
+        <span class="status-chip">{offerCount} merchant offer{offerCount===1?'':'s'}</span>
+      </div>
+
+      <ul class="feature-list">{product.features.map(f=><li>{f}</li>)}</ul>
+      {product.ingredients&&<div class="notice"><b>Ingredients</b><p>{product.ingredients}</p></div>}
+
+      <div class="offer offer-primary">
+        <div><div class="offer-label">Merchant</div><b>{product.merchant}</b><div class="muted">{product.availability} · Updated {product.updatedAt}</div></div>
+        <a class="btn" href={destination} target="_blank" rel="noopener noreferrer sponsored" data-shop data-product={product.id} data-merchant={product.merchant}>Shop at merchant ↗</a>
+      </div>
+
+      <div class="detail-actions">
+        <button class="btn light" data-wish={product.id}>♡ Save to wishlist</button>
+        <button class="btn light" data-compare={product.id}>＋ Add to compare</button>
+      </div>
+
+      <div class="notice trust-box">
+        <b>Trust & freshness</b>
+        <p>Price: {product.verifiedPrice?'verified':'pending'} · Rating source: {product.ratingSource||'pending'} · Rating date: {product.ratingDate||'pending'} · Affiliate: {product.affiliateStatus}.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="head">
+      <div><div class="eyebrow">You may also like</div><h2>Related products</h2></div>
+      <a class="head-link" href={base+'search?category='+encodeURIComponent(product.category)}>Explore category →</a>
+    </div>
+    <div class="grid">
+      {related.map(item=><a class="card card-polished" href={base+'product/'+item.id}><div class="card-img"><img src={item.image} alt={item.name} loading="lazy"><span class="card-pill">{item.audience}</span></div><div class="card-info"><div class="brand">{item.brand}</div><h3>{item.name}</h3><div class="meta"><span>{item.rating ? '★ '+item.rating : 'Rating pending'}</span><span class="price">{item.price ? item.currency+' '+item.price : 'Pending'}</span></div></div></a>)}
+    </div>
+  </section>
+
+  <script type="application/ld+json" set:html={JSON.stringify({"@context":"https://schema.org","@type":"Product","name":product.name,"brand":{"@type":"Brand","name":product.brand},"category":product.category,"image":product.gallery,"description":product.description,"offers":product.price?{"@type":"Offer","price":product.price,"priceCurrency":product.currency}:undefined})}></script>
+</BaseLayout>
+
+<script is:inline define:vars={{ id: product.id, base, merchant: product.merchant, destination }}>
+const read=k=>{try{return JSON.parse(localStorage.getItem(k)||'[]')}catch{return[]}};
+const views=read('z5-views');
+views.push({product:id,timestamp:new Date().toISOString(),source:location.pathname});
+localStorage.setItem('z5-views',JSON.stringify(views.slice(-10000)));
+const recent=read('z5-recent').filter(x=>x!==id);
+localStorage.setItem('z5-recent',JSON.stringify([id,...recent].slice(0,12)));
+
+document.querySelectorAll('[data-image]').forEach(button=>button.addEventListener('click',()=>{
+  const img=document.querySelector('#main-image');
+  if(img) img.src=button.dataset.image||'';
+  document.querySelectorAll('[data-image]').forEach(item=>item.classList.remove('active'));
+  button.classList.add('active');
+}));
+
+document.querySelector('[data-wish]')?.addEventListener('click',()=>{
+  const items=read('z5-wishlist');
+  localStorage.setItem('z5-wishlist',JSON.stringify(items.includes(id)?items.filter(x=>x!==id):[...items,id]));
+  location.reload();
+});
+
+document.querySelector('[data-compare]')?.addEventListener('click',()=>{
+  const items=read('z5-compare');
+  if(!items.includes(id)&&items.length<4) items.push(id);
+  localStorage.setItem('z5-compare',JSON.stringify(items));
+  location.href=base+'compare';
+});
+
+document.querySelector('[data-shop]')?.addEventListener('click',()=>{
+  const items=read('z5-clicks');
+  items.push({
+    product:id,
+    timestamp:new Date().toISOString(),
+    source:location.pathname,
+    merchant,
+    url:destination,
+    context:'product-page',
+    campaign:new URLSearchParams(location.search).get('utm_campaign')||''
+  });
+  localStorage.setItem('z5-clicks',JSON.stringify(items.slice(-5000)));
+});
 </script>

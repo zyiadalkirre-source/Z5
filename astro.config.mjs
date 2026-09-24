@@ -1,7 +1,5 @@
-import { defineConfig } from 'astro';
-
-export default defineConfig({
+export default {
   output: 'static',
   site: 'https://zyiadalkirre-source.github.io',
   base: '/Z5'
-});
+};

@@ -6,16 +6,23 @@
   "scripts": {
     "dev": "astro dev",
     "validate": "node scripts/validate-catalog.mjs",
+    "lint": "eslint \"src/**/*.{astro,ts,mjs}\" \"scripts/**/*.mjs\" \"astro.config.mjs\"",
     "typecheck": "astro check",
     "build": "astro check && astro build",
-    "check": "npm run validate && npm run typecheck && npm run build",
+    "check": "npm run validate && npm run lint && npm run typecheck && npm run build",
     "preview": "astro preview"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=22.22.3"
   },
   "dependencies": {
     "astro": "^5.16.0",
     "typescript": "^5.0.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "~10.0.1",
+    "eslint": "~10.11.0",
+    "eslint-plugin-astro": "~3.2.1",
+    "typescript-eslint": "~8.70.0"
   }
 }

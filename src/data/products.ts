@@ -58,3 +58,7 @@ make('laneige-lip-sleeping','Lip Sleeping Mask','LANEIGE','Personal Care','Women
 make('soldejaneiro-cheirosa-62','Cheirosa 62 Hair & Body Fragrance Mist','Sol de Janeiro','Gifts','Women','https://soldejaneiro.com/','Sephora','https://www.sephora.com/','photo-1541643600914-78b084683601',['Hair mist','Body fragrance']),
 make('tangle-teezer-detangler','The Ultimate Detangler','Tangle Teezer','Grooming Tools','Unisex','https://www.tangleteezer.com/','Ulta','https://www.ulta.com/','photo-1522338242992-e1a54906a8da',['Detangling brush','Wet hair']),
 make('foreo-luna-4','LUNA 4','FOREO','Grooming Tools','Unisex','https://www.foreo.com/','Sephora','https://www.sephora.com/','photo-1556228578-8c89e6adf883',['Facial cleansing device','Silicone brush'])];
+const merged=new Map<string,Product>();
+for(const item of seedProducts) merged.set(item.id,item);
+for(const item of liveProducts) merged.set(item.id,item);
+export const products:Product[]=Array.from(merged.values());

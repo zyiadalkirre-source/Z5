@@ -1,4 +1,21 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro'; import {products} from '../data/products';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { products } from '../data/products';
+const base = import.meta.env.BASE_URL;
 ---
-<BaseLayout title="Wishlist — Z5"><section class="section"><div class="eyebrow">Saved</div><h1>Your wishlist.</h1><p class="muted">Saved locally for this browser.</p><div id="wishlist" class="grid"></div></section><script type="application/json" id="catalog">{JSON.stringify(products)}</script></BaseLayout><script is:inline>const all=JSON.parse(document.querySelector('#catalog').textContent);const b=location.pathname.split('/wishlist')[0]+'/';const ids=JSON.parse(localStorage.getItem('z5-wishlist')||'[]');const ps=ids.map(id=>all.find(p=>p.id===id)).filter(Boolean);document.querySelector('#wishlist').innerHTML=ps.length?ps.map(p=>'<a class="card" href="'+b+'product/'+p.id+'"><div class="card-img"><img src="'+p.image+'" alt=""></div><div class="card-info"><div class="brand">'+p.brand+'</div><h3>'+p.name+'</h3><div class="meta"><span>'+p.category+'</span><span class="price">'+(p.price?'$ '+p.price:'Pending')+'</span></div></div></a>').join(''):'<div class="notice">No saved products yet. Open a product and tap Wishlist.</div>';</script>
+<BaseLayout title="Wishlist — Z5">
+  <section class="section">
+    <div class="eyebrow">Saved</div>
+    <h1 class="catalog-title">Your wishlist.</h1>
+    <p class="muted">A lightweight shortlist saved in this browser.</p>
+    <div id="wishlist" class="grid"></div>
+  </section>
+  <script type="application/json" id="catalog">{JSON.stringify(products)}</script>
+</BaseLayout>
+<script is:inline define:vars={{ base }}>
+const all=JSON.parse(document.querySelector('#catalog').textContent||'[]');
+const ids=(()=>{try{return JSON.parse(localStorage.getItem('z5-wishlist')||'[]')}catch{return[]}})();
+const ps=ids.map(id=>all.find(p=>p.id===id)).filter(Boolean);
+const root=document.querySelector('#wishlist');
+root.innerHTML=ps.length?ps.map(p=>'<a class="card card-polished" href="'+base+'product/'+p.id+'"><div class="card-img"><img src="'+p.image+'" alt="'+p.name+'" loading="lazy"><span class="card-pill">'+p.audience+'</span></div><div class="card-info"><div class="brand">'+p.brand+'</div><h3>'+p.name+'</h3><div class="meta"><span>'+p.category+'</span><span class="price">'+(p.price?(p.currency+' '+p.price):'Pending')+'</span></div></div></a>').join(''):'<div class="notice"><b>No saved products yet.</b><p>Open a product and add it to your wishlist to keep your shortlist here.</p><a class="btn" href="'+base+'search">Browse catalog</a></div>';
+</script>

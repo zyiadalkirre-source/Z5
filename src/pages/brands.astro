@@ -1,0 +1,4 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'; import {products} from '../data/products'; const brands=[...new Set(products.map(p=>p.brand))].sort(); const base=import.meta.env.BASE_URL;
+---
+<BaseLayout title="Brands — Z5"><section class="catalog"><div class="eyebrow">Brands</div><h1>Explore brands.</h1><p class="muted">Jump from a brand to products currently indexed by Z5.</p></section><section class="section"><div class="chips">{brands.map(b=><a class="chip" href={base+'search?q='+encodeURIComponent(b)}>{b}</a>)}</div></section></BaseLayout>

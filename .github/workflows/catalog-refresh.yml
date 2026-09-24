@@ -1,4 +1,6 @@
 name: Z5 Catalog Validation
+permissions:
+  contents: write
 on:
   schedule:
     - cron: '17 3 * * *'

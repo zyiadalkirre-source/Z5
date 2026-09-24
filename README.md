@@ -37,3 +37,7 @@ For member auth and member-scoped data, connect the production headless project 
 ### Build and deployment
 
 GitHub Pages deployment is configured through `.github/workflows/deploy.yml`. The catalog refresh workflow is `.github/workflows/catalog-refresh.yml` and activates the optional live feed when the repository secrets `Z5_CATALOG_FEED_URL` and `Z5_CATALOG_FEED_TOKEN` are configured.
+
+## Deployment
+
+Z5 is configured for GitHub Pages via GitHub Actions. Enable **Settings → Pages → Source → GitHub Actions** once, then each push to `main` deploys the Astro build.

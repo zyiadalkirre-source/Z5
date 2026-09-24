@@ -1,4 +1,74 @@
 ---
-import '../styles/global.css'; const {title='Z5 — Global Beauty Marketplace',description='Discover beauty and personal care products across brands and merchants.'}=Astro.props; const base=import.meta.env.BASE_URL;
+import '../styles/global.css';
+const { title='Z5 — Global Beauty Marketplace', description='Discover beauty and personal care products across brands and merchants.' } = Astro.props;
+const base = import.meta.env.BASE_URL;
 ---
-<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content={description}><meta property="og:title" content={title}><meta property="og:description" content={description}><meta property="og:type" content="website"><link rel="canonical" href={Astro.url.href}><link rel="icon" href={base+'favicon.svg'}><title>{title}</title></head><body><header class="header"><a class="logo" href={base}>Z5</a><nav><a href={base}>Discover</a><a href={base+'search'}>Shop</a><a href={base+'match'}>Z5 Match</a><a href={base+'deals'}>Deals</a><a href={base+'guides'}>Guides</a><a href={base+'compare'}>Compare <span id="compare-count" class="count"></span></a><a href={base+'wishlist'}>Wishlist <span id="wish-count" class="count"></span></a></nav><div class="actions"><a href={base+'search'} class="search">⌕ Search</a><a href={base+'account'}>Account</a></div></header><main><slot/></main><footer><div><div class="logo">Z5</div><p>Beauty discovery, without the checkout clutter.</p></div><div><b>Explore</b><a href={base+'search'}>Products</a><a href={base+'brands'}>Brands</a><a href={base+'deals'}>Deals</a><a href={base+'match'}>Z5 Match</a><a href={base+'guides'}>Guides</a></div><div><b>Trust</b><a href={base+'disclosure'}>Affiliate disclosure</a><a href={base+'account'}>Account</a><a href={base+'admin'}>Admin</a></div></footer><script is:inline>const w=JSON.parse(localStorage.getItem('z5-wishlist')||'[]');const c=JSON.parse(localStorage.getItem('z5-compare')||'[]');document.querySelector('#wish-count')?.append(w.length?String(w.length):'');document.querySelector('#compare-count')?.append(c.length?String(c.length):'');</script></body></html>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="description" content={description}>
+    <meta property="og:title" content={title}>
+    <meta property="og:description" content={description}>
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Z5">
+    <link rel="canonical" href={Astro.url.href}>
+    <link rel="icon" href={base+'favicon.svg'}>
+    <link rel="manifest" href={base+'site.webmanifest'}>
+    <title>{title}</title>
+  </head>
+  <body>
+    <div class="announcement"><span>✦ Z5 Global Beauty Marketplace</span><span>Discovery first · transparent affiliate relationships</span></div>
+    <header class="header">
+      <a class="logo" href={base} aria-label="Z5 home">Z5<span>.</span></a>
+      <nav aria-label="Primary">
+        <a href={base}>Discover</a>
+        <a href={base+'search'}>Shop</a>
+        <a href={base+'match'}>Z5 Match</a>
+        <a href={base+'deals'}>Deals</a>
+        <a href={base+'guides'}>Guides</a>
+      </nav>
+      <div class="actions">
+        <a href={base+'search'} class="search">⌕ <span>Search</span></a>
+        <a href={base+'compare'} class="icon-link">Compare <span id="compare-count" class="count"></span></a>
+        <a href={base+'wishlist'} class="icon-link">Wishlist <span id="wish-count" class="count"></span></a>
+        <a href={base+'account'} class="account-link">Account</a>
+      </div>
+    </header>
+    <main><slot/></main>
+    <footer>
+      <div>
+        <div class="logo footer-logo">Z5<span>.</span></div>
+        <p>Beauty discovery, without the checkout clutter.</p>
+        <small>Global catalog · affiliate-ready architecture</small>
+      </div>
+      <div>
+        <b>Explore</b>
+        <a href={base+'search'}>Products</a>
+        <a href={base+'brands'}>Brands</a>
+        <a href={base+'deals'}>Deals</a>
+        <a href={base+'match'}>Z5 Match</a>
+        <a href={base+'guides'}>Guides</a>
+      </div>
+      <div>
+        <b>Trust</b>
+        <a href={base+'disclosure'}>Affiliate disclosure</a>
+        <a href={base+'account'}>Account</a>
+        <a href={base+'recent'}>Recently viewed</a>
+        <a href={base+'admin'}>Admin</a>
+      </div>
+    </footer>
+    <script is:inline>
+      const readCount = (key) => {
+        try { return JSON.parse(localStorage.getItem(key) || '[]'); } catch { return []; }
+      };
+      const w = readCount('z5-wishlist');
+      const c = readCount('z5-compare');
+      const wish = document.querySelector('#wish-count');
+      const compare = document.querySelector('#compare-count');
+      if (wish && w.length) wish.textContent = String(w.length);
+      if (compare && c.length) compare.textContent = String(c.length);
+    </script>
+  </body>
+</html>

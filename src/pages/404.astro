@@ -1,0 +1,15 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+const base = import.meta.env.BASE_URL;
+---
+<BaseLayout title="Page not found — Z5">
+  <section class="page empty-state">
+    <div class="eyebrow">Z5 · 404</div>
+    <h1>That page moved.</h1>
+    <p class="muted">Return to discovery or jump straight into the catalog.</p>
+    <div class="detail-actions" style="justify-content:center">
+      <a class="btn" href={base}>Back to Z5</a>
+      <a class="btn light" href={base+'search'}>Browse products</a>
+    </div>
+  </section>
+</BaseLayout>

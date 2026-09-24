@@ -1,4 +1,76 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro'; import {products,categories} from '../data/products'; const base=import.meta.env.BASE_URL; const q=(Astro.url.searchParams.get('q')||'').toLowerCase(); const category=Astro.url.searchParams.get('category')||''; const audience=Astro.url.searchParams.get('audience')||''; const merchant=Astro.url.searchParams.get('merchant')||''; const minRating=Number(Astro.url.searchParams.get('minRating')||0); const sort=Astro.url.searchParams.get('sort')||'relevance'; let filtered=products.filter(p=>(!q||[p.name,p.brand,p.category,p.audience].join(' ').toLowerCase().includes(q))&&(!category||p.category===category)&&(!audience||p.audience===audience)&&(!merchant||p.merchant===merchant)&&(!minRating||(p.rating||0)>=minRating)); filtered=[...filtered].sort((a,b)=>sort==='rating'?(b.rating||0)-(a.rating||0):sort==='price'?((a.price??999999)-(b.price??999999)):sort==='name'?a.name.localeCompare(b.name):0);
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { products, categories } from '../data/products';
+
+const base = import.meta.env.BASE_URL;
+const q = (Astro.url.searchParams.get('q') || '').toLowerCase();
+const category = Astro.url.searchParams.get('category') || '';
+const audience = Astro.url.searchParams.get('audience') || '';
+const merchant = Astro.url.searchParams.get('merchant') || '';
+const minRating = Number(Astro.url.searchParams.get('minRating') || 0);
+const sort = Astro.url.searchParams.get('sort') || 'relevance';
+
+let filtered = products.filter(item =>
+  (!q || [item.name,item.brand,item.category,item.audience].join(' ').toLowerCase().includes(q)) &&
+  (!category || item.category === category) &&
+  (!audience || item.audience === audience) &&
+  (!merchant || item.merchant === merchant) &&
+  (!minRating || (item.rating || 0) >= minRating)
+);
+filtered = [...filtered].sort((a,b) =>
+  sort === 'rating' ? (b.rating||0)-(a.rating||0) :
+  sort === 'price' ? ((a.price??999999)-(b.price??999999)) :
+  sort === 'name' ? a.name.localeCompare(b.name) : 0
+);
 ---
-<BaseLayout title="Shop — Z5"><section class="catalog"><div class="eyebrow">Z5 catalog</div><h1>Discover beauty products.</h1><p class="muted">Search product, brand or category, then narrow by audience, merchant and verified rating.</p></section><form class="filters" method="get"><input name="q" value={q} placeholder="Search products, brands..."><select name="category"><option value="">All categories</option>{categories.map(c=><option value={c} selected={category===c}>{c}</option>)}</select><select name="audience"><option value="">All audiences</option>{['Women','Men','Unisex'].map(a=><option value={a} selected={audience===a}>{a}</option>)}</select><select name="merchant"><option value="">All merchants</option>{[...new Set(products.map(p=>p.merchant))].map(m=><option value={m} selected={merchant===m}>{m}</option>)}</select><select name="minRating"><option value="0">Any rating</option><option value="4" selected={minRating===4}>4+ stars</option><option value="4.5" selected={minRating===4.5}>4.5+ stars</option></select><select name="sort"><option value="relevance">Relevance</option><option value="rating" selected={sort==='rating'}>Rating</option><option value="price" selected={sort==='price'}>Price</option><option value="name" selected={sort==='name'}>Name</option></select><button class="btn" type="submit">Apply</button></form><section class="section"><div class="head"><h2>{filtered.length} products</h2><span class="muted">50 seeded real products</span></div><div class="grid">{filtered.map(p=><a class="card" href={base+'product/'+p.id}><div class="card-img"><img src={p.image} alt={p.name}></div><div class="card-info"><div class="brand">{p.brand} · {p.category}</div><h3>{p.name}</h3><div class="meta"><span>{p.rating ? '★ '+p.rating+' · '+p.reviews : 'Rating pending'}</span><span class="price">{p.price ? '$ '+p.price : 'See merchant'}</span></div></div></a>)}</div></section></BaseLayout>
+<BaseLayout title="Shop — Z5">
+  <section class="catalog">
+    <div class="eyebrow">Z5 catalog</div>
+    <h1>Find your next beauty staple.</h1>
+    <p class="muted">Search across product names, brands and categories. Every result keeps its freshness and verification state visible.</p>
+  </section>
+
+  <form class="filters search-panel" method="get">
+    <div class="filter-row">
+      <div class="search-wide"><span>⌕</span><input name="q" value={q} placeholder="Search products, brands, categories…" aria-label="Search products"><button class="btn" type="submit">Search</button></div>
+    </div>
+    <div class="filter-row filter-grid">
+      <select name="category"><option value="">All categories</option>{categories.map(c=><option value={c} selected={category===c}>{c}</option>)}</select>
+      <select name="audience"><option value="">All audiences</option>{['Women','Men','Unisex'].map(a=><option value={a} selected={audience===a}>{a}</option>)}</select>
+      <select name="merchant"><option value="">All merchants</option>{[...new Set(products.map(item=>item.merchant))].map(m=><option value={m} selected={merchant===m}>{m}</option>)}</select>
+      <select name="minRating"><option value="0">Any rating</option><option value="4" selected={minRating===4}>4+ stars</option><option value="4.5" selected={minRating===4.5}>4.5+ stars</option></select>
+      <select name="sort"><option value="relevance">Relevance</option><option value="rating" selected={sort==='rating'}>Rating</option><option value="price" selected={sort==='price'}>Price</option><option value="name" selected={sort==='name'}>Name</option></select>
+    </div>
+  </form>
+
+  <section class="section search-results">
+    <div class="head">
+      <div><div class="eyebrow">Results</div><h2>{filtered.length} products</h2></div>
+      <span class="muted">52 product identities · live values appear when sourced</span>
+    </div>
+    {filtered.length ? (
+      <div class="grid">
+        {filtered.map(item => (
+          <a class="card card-polished" href={base+'product/'+item.id}>
+            <div class="card-img">
+              <img src={item.image} alt={item.name} loading="lazy">
+              <span class="card-pill">{item.audience}</span>
+            </div>
+            <div class="card-info">
+              <div class="brand">{item.brand} · {item.category}</div>
+              <h3>{item.name}</h3>
+              <div class="meta"><span>{item.rating ? '★ '+item.rating+' · '+item.reviews+' reviews' : 'Rating pending'}</span><span class="price">{item.price ? item.currency+' '+item.price : 'Price pending'}</span></div>
+            </div>
+          </a>
+        ))}
+      </div>
+    ) : (
+      <div class="page empty-state">
+        <div class="eyebrow">No match</div>
+        <h2>No products found.</h2>
+        <p class="muted">Try a broader brand, category or audience term.</p>
+        <a class="btn" href={base+'search'}>Reset search</a>
+      </div>
+    )}
+  </section>
+</BaseLayout>

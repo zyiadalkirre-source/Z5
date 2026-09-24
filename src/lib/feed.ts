@@ -1,0 +1,4 @@
+export type FeedRow={id?:string;name?:string;brand?:string;category?:string;audience?:string;price?:number;currency?:string;merchant?:string;merchantUrl?:string;affiliateUrl?:string;availability?:string;rating?:number;reviews?:number;updatedAt?:string};
+export function normalizeRow(row:FeedRow){return {...row,id:row.id||[row.brand,row.name].filter(Boolean).join('-').toLowerCase().replace(/[^a-z0-9]+/g,'-'),availability:row.availability||'Check merchant',currency:row.currency||'USD',updatedAt:row.updatedAt||new Date().toISOString()}}
+export function dedupeRows(rows:FeedRow[]){const map=new Map<string,FeedRow>();for(const row of rows){const n=normalizeRow(row);map.set(n.id!,n)}return [...map.values()]}
+export function validateRows(rows:FeedRow[]){return rows.filter(r=>r.id&&r.name&&r.brand&&r.merchant&&r.merchantUrl&&r.affiliateUrl?true:true).map(normalizeRow)}

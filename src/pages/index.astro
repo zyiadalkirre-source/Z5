@@ -1,4 +1,155 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro'; import {products,categories} from '../data/products'; const featured=products.slice(0,6); const trending=products.slice(6,12); const base=import.meta.env.BASE_URL;
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { products, categories } from '../data/products';
+
+const featured = products.slice(0, 6);
+const trending = products.slice(6, 12);
+const base = import.meta.env.BASE_URL;
+const audienceCards = [
+  { label: 'Women', note: 'Skincare, makeup, fragrance', href: base+'search?audience=Women', tone: 'lav' },
+  { label: 'Men', note: 'Grooming, hair, body care', href: base+'search?audience=Men', tone: 'rose' },
+  { label: 'Unisex', note: 'Flexible everyday essentials', href: base+'search?audience=Unisex', tone: 'sand' }
+];
 ---
-<BaseLayout><section class="hero"><div><div class="eyebrow">Z5 Global Beauty Marketplace</div><h1>Find what fits your routine.</h1><p>Discover real beauty and personal-care products, compare options, then continue to the merchant.</p><div class="buttons"><a class="btn" href={base+'search'}>Explore products</a><a class="btn light" href={base+'compare'}>Compare picks</a></div></div><div class="hero-art"><img src="https://images.unsplash.com/photo-1611930022073-b7a4ba5fcccd?auto=format&fit=crop&w=1000&q=85" alt="Beauty products"><div class="hero-note"><b>Discovery first.</b><span>Z5 does not process payments. Prices and availability are verified before publication.</span></div></div></section><section class="section"><div class="head"><div><div class="eyebrow">Browse</div><h2>Shop by category</h2></div></div><div class="chips">{categories.map(c=><a class="chip" href={base+'search?category='+encodeURIComponent(c)}>{c}</a>)}</div></section><section class="section"><div class="head"><div><div class="eyebrow">Catalog</div><h2>Featured products</h2></div><a href={base+'search'}>View all →</a></div><div class="grid">{featured.map(p=><a class="card" href={base+'product/'+p.id}><div class="card-img"><img src={p.image} alt={p.name}></div><div class="card-info"><div class="brand">{p.brand} · {p.category}</div><h3>{p.name}</h3><div class="meta"><span>{p.rating ? '★ '+p.rating : 'Rating pending'}</span><span class="price">{p.price ? '$ '+p.price : 'See merchant'}</span></div></div></a>)}</div></section><section class="section"><div class="head"><div><div class="eyebrow">Trending</div><h2>Worth a closer look</h2></div></div><div class="grid">{trending.map(p=><a class="card" href={base+'product/'+p.id}><div class="card-img"><img src={p.image} alt={p.name}></div><div class="card-info"><div class="brand">{p.brand} · {p.category}</div><h3>{p.name}</h3><div class="meta"><span>{p.rating ? '★ '+p.rating : 'Rating pending'}</span><span class="price">{p.price ? '$ '+p.price : 'See merchant'}</span></div></div></a>)}</div></section><div class="trust"><div><b>Affiliate transparency.</b><p>Affiliate links stay disabled until a Z5 program relationship and tracking URL are verified.</p></div><a class="btn light" href={base+'disclosure'}>Read disclosure</a></div></BaseLayout>
+<BaseLayout>
+  <section class="hero hero-premium">
+    <div class="hero-copy">
+      <div class="eyebrow">Z5 · GLOBAL BEAUTY DISCOVERY</div>
+      <h1>Beauty finds,<br><em>sorted better.</em></h1>
+      <p>Search trusted product identities, compare options, and jump to the merchant when you’re ready. No checkout clutter.</p>
+      <form class="hero-search" action={base+'search'} method="get">
+        <span>⌕</span>
+        <input name="q" placeholder="Search products, brands, categories…" aria-label="Search products">
+        <button class="btn" type="submit">Search</button>
+      </form>
+      <div class="hero-links">
+        <a href={base+'match'}>✨ Find my match</a>
+        <a href={base+'compare'}>Compare picks</a>
+        <a href={base+'guides'}>Read guides</a>
+      </div>
+      <div class="hero-stats">
+        <div><strong>52</strong><span>product identities</span></div>
+        <div><strong>10</strong><span>core categories</span></div>
+        <div><strong>4</strong><span>merchant surfaces</span></div>
+      </div>
+    </div>
+    <div class="hero-art hero-art-premium">
+      <img src="https://images.unsplash.com/photo-1611930022073-b7a4ba5fcccd?auto=format&fit=crop&w=1200&q=88" alt="Beauty products arranged for discovery">
+      <div class="hero-floating hero-floating-top">Editor-led discovery</div>
+      <div class="hero-note">
+        <b>Transparent by design.</b>
+        <span>Prices, ratings and affiliate status stay visibly marked as pending until a trusted source is connected.</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section compact-section">
+    <div class="section-kicker">START HERE</div>
+    <div class="audience-grid">
+      {audienceCards.map(card => (
+        <a class={'audience-card ' + card.tone} href={card.href}>
+          <span class="audience-arrow">↗</span>
+          <div class="audience-label">{card.label}</div>
+          <p>{card.note}</p>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="head">
+      <div><div class="eyebrow">Browse smarter</div><h2>Shop by category</h2></div>
+      <a class="head-link" href={base+'search'}>All products →</a>
+    </div>
+    <div class="category-grid">
+      {categories.map((c, i) => (
+        <a class="category-tile" href={base+'search?category='+encodeURIComponent(c)}>
+          <span>{String(i+1).padStart(2,'0')}</span>
+          <strong>{c}</strong>
+          <em>Explore →</em>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="section tone-section">
+    <div class="head">
+      <div><div class="eyebrow">Curated</div><h2>Featured products</h2><p class="muted">Real product identities with freshness and verification status shown openly.</p></div>
+      <a class="head-link" href={base+'search'}>View all →</a>
+    </div>
+    <div class="grid">
+      {featured.map((p, i) => (
+        <a class="card card-polished" href={base+'product/'+p.id}>
+          <div class="card-img">
+            <img src={p.image} alt={p.name} loading={i > 1 ? 'lazy' : 'eager'}>
+            <span class="card-pill">{p.category}</span>
+          </div>
+          <div class="card-info">
+            <div class="brand">{p.brand}</div>
+            <h3>{p.name}</h3>
+            <div class="meta">
+              <span>{p.rating ? '★ '+p.rating+' · '+p.reviews : 'Rating pending'}</span>
+              <span class="price">{p.price ? p.currency+' '+p.price : 'Price pending'}</span>
+            </div>
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="head">
+      <div><div class="eyebrow">Trending shelf</div><h2>Worth a closer look</h2></div>
+      <a class="head-link" href={base+'match'}>Use Z5 Match →</a>
+    </div>
+    <div class="grid">
+      {trending.map((p, i) => (
+        <a class="card card-polished" href={base+'product/'+p.id}>
+          <div class="card-img">
+            <img src={p.image} alt={p.name} loading="lazy">
+            <span class="trend-badge">Trending {i+1}</span>
+          </div>
+          <div class="card-info">
+            <div class="brand">{p.brand} · {p.audience}</div>
+            <h3>{p.name}</h3>
+            <div class="meta">
+              <span>{p.rating ? '★ '+p.rating : 'Rating pending'}</span>
+              <span class="price">{p.price ? p.currency+' '+p.price : 'See merchant'}</span>
+            </div>
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="feature-band">
+      <div>
+        <div class="eyebrow">Why Z5</div>
+        <h2>Discovery without the noise.</h2>
+        <p>Compare across merchants, save your shortlist, revisit what you viewed, and keep affiliate relationships visible.</p>
+      </div>
+      <div class="feature-list-grid">
+        <div><b>01 · Compare</b><span>Price, rating, size, audience and features.</span></div>
+        <div><b>02 · Save</b><span>Wishlist and recently viewed in your browser.</span></div>
+        <div><b>03 · Match</b><span>Fast rules-based discovery by category, audience and budget.</span></div>
+        <div><b>04 · Verify</b><span>Affiliate URLs and deal badges only go live when sourced.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section newsletter-section">
+    <div class="newsletter">
+      <div><div class="eyebrow">Z5 journal</div><h2>Beauty guides, delivered occasionally.</h2><p>New guides, comparison notes and catalog updates. No checkout, no noise.</p></div>
+      <form class="newsletter-form" onsubmit="return false">
+        <input type="email" placeholder="Email address" aria-label="Email address">
+        <button class="btn" type="submit">Join</button>
+      </form>
+    </div>
+  </section>
+
+  <section class="trust">
+    <div><b>Affiliate transparency.</b><p>Z5 is a discovery marketplace. We do not process payments or orders. A merchant offer is clearly distinguished from a verified affiliate destination.</p></div>
+    <a class="btn light" href={base+'disclosure'}>Read disclosure</a>
+  </section>
+</BaseLayout>

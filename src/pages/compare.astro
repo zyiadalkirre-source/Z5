@@ -1,4 +1,26 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro'; import {products} from '../data/products';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { products } from '../data/products';
+const base = import.meta.env.BASE_URL;
 ---
-<BaseLayout title="Compare — Z5"><section class="page"><div class="eyebrow">Side by side</div><h1>Compare your shortlist.</h1><p class="muted">Up to four products, stored locally in this browser.</p><div id="compare"></div></section><script type="application/json" id="catalog">{JSON.stringify(products)}</script></BaseLayout><script is:inline>const all=JSON.parse(document.querySelector('#catalog').textContent);const b=location.pathname.split('/compare')[0]+'/';const ids=JSON.parse(localStorage.getItem('z5-compare')||'[]');const ps=ids.map(id=>all.find(p=>p.id===id)).filter(Boolean);const root=document.querySelector('#compare');if(!ps.length){root.innerHTML='<div class="notice">Your comparison is empty.</div><a class="btn" href="'+b+'search">Browse products</a>'}else{root.innerHTML='<div class="compare-table">'+ps.map(p=>'<article class="compare-card"><img src="'+p.image+'" alt=""><b>'+p.brand+'</b><h3>'+p.name+'</h3><p>Category: '+p.category+'</p><p>Audience: '+p.audience+'</p><p>Price: '+(p.price?'$'+p.price:'Pending')+'</p><p>Rating: '+(p.rating||'Pending')+'</p><p>Merchant: '+p.merchant+'</p><a class="btn" href="'+b+'product/'+p.id+'">View</a></article>').join('')+'</div><button class="btn light" id="clear">Clear comparison</button>';document.querySelector('#clear').onclick=()=>{localStorage.removeItem('z5-compare');location.reload()}}</script>
+<BaseLayout title="Compare — Z5">
+  <section class="page">
+    <div class="eyebrow">Side by side</div>
+    <h1>Compare your shortlist.</h1>
+    <p class="muted">Up to four products. Price, rating and merchant context stay visible together.</p>
+    <div id="compare"></div>
+  </section>
+  <script type="application/json" id="catalog">{JSON.stringify(products)}</script>
+</BaseLayout>
+<script is:inline define:vars={{ base }}>
+const all=JSON.parse(document.querySelector('#catalog').textContent||'[]');
+const ids=(()=>{try{return JSON.parse(localStorage.getItem('z5-compare')||'[]')}catch{return[]}})();
+const ps=ids.map(id=>all.find(p=>p.id===id)).filter(Boolean);
+const root=document.querySelector('#compare');
+if(!ps.length){
+  root.innerHTML='<div class="empty-state"><div class="notice"><b>Your comparison is empty.</b><p>Save products from any product page to build a side-by-side shortlist.</p><a class="btn" href="'+base+'search">Browse products</a></div></div>';
+}else{
+  root.innerHTML='<div class="compare-table">'+ps.map(p=>'<article class="compare-card"><img src="'+p.image+'" alt="'+p.name+'"><div class="brand">'+p.brand+'</div><h3>'+p.name+'</h3><p><b>Category</b><br>'+p.category+'</p><p><b>Audience</b><br>'+p.audience+'</p><p><b>Price</b><br>'+(p.price?(p.currency+' '+p.price):'Pending')+'</p><p><b>Rating</b><br>'+(p.rating?('★ '+p.rating+' · '+p.reviews):'Pending')+'</p><p><b>Merchant</b><br>'+p.merchant+'</p><a class="btn" href="'+base+'product/'+p.id+'">View product</a></article>').join('')+'</div><div class="detail-actions"><button class="btn light" id="clear" type="button">Clear comparison</button><a class="btn light" href="'+base+'search">Add more</a></div>';
+  document.querySelector('#clear').onclick=()=>{localStorage.removeItem('z5-compare');location.reload()};
+}
+</script>

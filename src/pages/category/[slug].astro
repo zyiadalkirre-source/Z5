@@ -1,0 +1,4 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'; import {products,categories} from '../../data/products'; export function getStaticPaths(){return categories.map(category=>({params:{slug:category.toLowerCase().replace(/[^a-z0-9]+/g,'-')},props:{category}}));} const {category}=Astro.props; const list=products.filter(p=>p.category===category); const base=import.meta.env.BASE_URL;
+---
+<BaseLayout title={category+' — Z5'}><section class="catalog"><div class="eyebrow">Category</div><h1>{category}</h1><p class="muted">{list.length} products indexed by Z5.</p></section><section class="section"><div class="grid">{list.map(p=><a class="card" href={base+'product/'+p.id}><div class="card-img"><img src={p.image} alt={p.name}></div><div class="card-info"><div class="brand">{p.brand}</div><h3>{p.name}</h3><div class="meta"><span>{p.audience}</span><span class="price">{p.price?'$ '+p.price:'Pending'}</span></div></div></a>)}</div></section></BaseLayout>

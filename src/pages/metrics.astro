@@ -1,0 +1,12 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout title="Z5 Analytics — Admin"><section class="section"><div class="eyebrow">Analytics</div><h1>Outbound performance.</h1><p class="muted">Browser-level MVP analytics. Production analytics should be persisted server-side.</p><div class="admin-stats"><div class="notice"><b>Outbound clicks</b><strong id="clicks">0</strong></div><div class="notice"><b>Unique products</b><strong id="products">0</strong></div><div class="notice"><b>Top merchant</b><strong id="merchant">—</strong></div></div><div class="table-wrap"><table><thead><tr><th>Product</th><th>Merchant</th><th>Clicks</th></tr></thead><tbody id="rows"></tbody></table></div></section></BaseLayout><script is:inline>
+const clicks=JSON.parse(localStorage.getItem('z5-clicks')||'[]');
+document.querySelector('#clicks').textContent=clicks.length;
+const products=[...new Set(clicks.map(x=>x.product))];document.querySelector('#products').textContent=products.length;
+const byMerchant={};clicks.forEach(x=>byMerchant[x.merchant]=(byMerchant[x.merchant]||0)+1);
+document.querySelector('#merchant').textContent=Object.entries(byMerchant).sort((a,b)=>b[1]-a[1])[0]?.[0]||'—';
+const byProduct={};clicks.forEach(x=>byProduct[x.product]=(byProduct[x.product]||0)+1);
+document.querySelector('#rows').innerHTML=Object.entries(byProduct).sort((a,b)=>b[1]-a[1]).map(([k,v])=>'<tr><td>'+k+'</td><td>'+((clicks.find(x=>x.product===k)||{}).merchant||'—')+'</td><td>'+v+'</td></tr>').join('')||'<tr><td colspan="3">No clicks recorded yet.</td></tr>';
+</script>

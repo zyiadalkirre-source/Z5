@@ -1,0 +1,3 @@
+export type AffiliateClick={clickId:string;productId:string;merchantId:string;programId:string;network:string;destinationUrl:string;timestamp:string;sourcePage:string;campaign?:string;subId?:string};
+export type AffiliateConversion={conversionId:string;clickId:string;productId?:string;merchantId:string;programId:string;network:string;status:'pending'|'approved'|'rejected';commission?:number;currency?:string;timestamp:string};
+export function isVerifiedDestination(status:string,affiliateUrl:string|null){return status==='verified'&&Boolean(affiliateUrl)}

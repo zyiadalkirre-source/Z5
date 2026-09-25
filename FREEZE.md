@@ -29,3 +29,10 @@
 ## Layer: CI
 - Status: ACTIVE
 - Reason: Latest CI run 36074254785 failed because the Lint step failed.
+
+## Temporary Hold: ESLint Configuration
+- Status: HOLD (do not edit)
+- Date: 2026-09-25
+- File: eslint.config.mjs
+- Reason: Preserve the current lint configuration during diagnosis. Defrost is required before any change to this file.
+- Defrost condition: User provides the code/context needed for the verified fix.

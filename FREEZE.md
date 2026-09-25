@@ -23,12 +23,20 @@
 - Reason: Repository requires Node >=22.22.3, while this execution environment reports Node 22.16.0. The CI workflow requests Node 22.22.3, but the exact local acceptance command has not been verified against that version.
 
 ## Layer: Lint
-- Status: ACTIVE
-- Reason: Latest CI run 36074254785 failed in the Lint step. The exact lint output is not available through the current GitHub log endpoint.
+- Status: FROZEN
+- Date: 2026-09-25
+- Files: eslint.config.mjs, package.json (lint script)
+- Acceptance Test: npm run lint
+- Evidence: GitHub Actions run 36091898403 passed the full CI job after the scoped Node globals fix and cleanup of unused symbols.
+- Reason: Prevents regression of the verified ESLint gate.
 
 ## Layer: CI
-- Status: ACTIVE
-- Reason: Latest CI run 36074254785 failed because the Lint step failed.
+- Status: FROZEN
+- Date: 2026-09-25
+- Files: .github/workflows/ci.yml
+- Acceptance Test: GitHub Actions Z5 CI run 36091898403
+- Evidence: Run 36091898403 completed successfully with Validate, Lint, Typecheck, and Build passing.
+- Reason: Establishes the verified repository quality pipeline as a protected release gate.
 
 ## Defrost Record: ESLint Configuration
 - Status: DEFROSTED

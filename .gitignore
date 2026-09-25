@@ -1,0 +1,14 @@
+node_modules/
+dist/
+.astro/
+.next/
+.vercel/
+coverage/
+playwright-report/
+test-results/
+.z5-cache/
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
